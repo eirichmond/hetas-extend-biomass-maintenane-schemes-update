@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:     Hetas Extend Biomass Maintenane Schemes
+ * Plugin Name:     Hetas Extend Biomass Maintenane Schemes Update
  * Plugin URI:      https://www.hetas.co.uk
  * Description:     This extends business updates for Biomass Maintenance schemes, a cron job should be setup to fire the action "update_biomass_maintenance_business" the separate update for HABMS buinesses.
  * Author:          Elliott Richmond
@@ -101,7 +101,10 @@ function get_biomass_business_competencies($business_id){
 function update_biomass_business_competencies($post_id, $accountid) {
 	// get all the compentencies associated with this busines and put them in an array
 	$competency_array = get_biomass_business_competencies($accountid);
-	wp_set_object_terms($post_id, $competency_array, 'competencies', false);
+	echo '<pre>'.print_r($post_id).'</pre>';
+	echo '<pre>'.print_r($competency_array).'</pre>';
+	$results = wp_set_object_terms($post_id, $competency_array, 'competencies', false);
+	echo '<pre>'.print_r($results).'</pre>';
 }
 
 /**
