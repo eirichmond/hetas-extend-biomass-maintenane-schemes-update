@@ -101,10 +101,29 @@ function get_biomass_business_competencies($business_id){
 function update_biomass_business_competencies($post_id, $accountid) {
 	// get all the compentencies associated with this busines and put them in an array
 	$competency_array = get_biomass_business_competencies($accountid);
-	echo '<pre>'.print_r($post_id).'</pre>';
-	echo '<pre>'.print_r($competency_array).'</pre>';
-	$results = wp_set_object_terms($post_id, $competency_array, 'competencies', false);
-	echo '<pre>'.print_r($results).'</pre>';
+    $term_info = biomass_set_terminfo($competency_array);
+	$results = wp_set_object_terms($post_id, $term_info, 'competencies', false);
+}
+
+/**
+ * setup correct terms by id to overcome odd htmlentities
+ *
+ * @param array $competency_array
+ * @return array $term_ids
+ */
+function biomass_set_terminfo($competency_array) {
+	$term_ids   = array();
+    foreach($competency_array as $termx) {
+        $term = htmlentities($termx);
+        $term_info = term_exists( $term, 'competencies' );
+        if($term_info){
+            $term_ids[] = (int)$term_info['term_id'];
+        } else {
+            $term_info = wp_insert_term( $term, 'competencies' );
+            $term_ids[] = (int)$term_info['term_id'];
+        }
+    }
+    return $term_ids;
 }
 
 /**
