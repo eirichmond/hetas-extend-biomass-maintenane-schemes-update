@@ -74,34 +74,6 @@ function set_biomass_maintenance_crm_not_checked() {
 }
 
 /**
- * Set not checked to unpublished
- *
- * @return void
- */
-function set_biomass_maintenance_crm_not_checked_unpublished() {
-	global $wpdb; // this is how you get access to the database
-
-	$results = $wpdb->get_results(
-		"SELECT {$wpdb->prefix}posts.`ID`, {$wpdb->prefix}posts.`post_type`, {$wpdb->prefix}postmeta.`meta_key`
-			FROM {$wpdb->prefix}posts
-		JOIN {$wpdb->prefix}postmeta
-			ON {$wpdb->prefix}posts.`ID` = {$wpdb->prefix}postmeta.`post_id`
-		WHERE {$wpdb->prefix}posts.`post_type` = 'business'
-		AND {$wpdb->prefix}postmeta.`meta_key` = 'van_schemetype'",
-		OBJECT );
-	foreach($results as $business) {
-		$crm_checked = get_post_meta( $business->ID, '_crm_checked', true);
-		if($crm_checked == '-999') {
-			$postarr = array(
-				'ID' => $business->ID,
-				'post_status' => 'draft'
-			);
-			wp_update_post( $postarr );
-		}
-	}
-}
-
-/**
  * prepare compentencies for taxonomy object
  *
  * @param string $business_id
@@ -229,7 +201,6 @@ function update_create_biomass_business($business, $scheme, $rhi_manufacturers){
 		set_biomass_unchecked_to_unpublished($hetas_business->ID);
 	}
 
-
 }
 
 
@@ -250,9 +221,6 @@ function update_biomass_maintenance_business_callback() {
 		// create or update businesses
 		update_create_biomass_business($business, $scheme, $rhi_manufacturers);
 	}
-
-	set_biomass_maintenance_crm_not_checked_unpublished();
-
 	error_log('BMS log: update complete.');
 	
 }
